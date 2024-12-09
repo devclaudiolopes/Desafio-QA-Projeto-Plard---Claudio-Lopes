@@ -1,0 +1,334 @@
+{
+	"info": {
+		"_postman_id": "33d1d5f8-5e9e-4464-a1ec-3123b7e9a60e",
+		"name": "advantageonlineshopping",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "21287500"
+	},
+	"item": [
+		{
+			"name": "Get product by name",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"     pm.expect(pm.response.code).to.equal(200);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/catalog/api/v1/products/search?name=Bose Soundlink Bluetooth Speaker III&quantityPerEachCategory=-1",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"catalog",
+						"api",
+						"v1",
+						"products",
+						"search"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "Bose Soundlink Bluetooth Speaker III"
+						},
+						{
+							"key": "quantityPerEachCategory",
+							"value": "-1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const responseData = pm.response.json();",
+							"",
+							"pm.environment.set(\"tokenUser\",responseData.statusMessage.token)",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"     pm.expect(pm.response.code).to.equal(200);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"email\": \"julianoromeu@mailinator.com\",\n  \"loginPassword\": \"Teste123@\",\n  \"loginUser\": \"teste123\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/accountservice/accountrest/api/v1/login",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"accountservice",
+						"accountrest",
+						"api",
+						"v1",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Upload Image",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Sucess Upload Image\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"true\")",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tokenUser}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "postman-cloud:///1efb29e3-3d18-4240-acb5-38ee405635a5"
+						},
+						{
+							"key": "product_id",
+							"value": "{{productId}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{url}}/catalog/api/v1/product/image/{{userId}}/{{source}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"catalog",
+						"api",
+						"v1",
+						"product",
+						"image",
+						"{{userId}}",
+						"{{source}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "product id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Verifica se a resposta é bem-sucedida\r",
+							"pm.test(\"Status code é 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"// Procura pelo produto \"HP Pavilion 15\" e armazena seu ID\r",
+							"let products = pm.response.json().products;\r",
+							"let product = products.find(p => p.productName === \"HP Pavilion 15\");\r",
+							"\r",
+							"pm.test(\"Produto 'HP Pavilion 15' encontrado\", function () {\r",
+							"    pm.expect(product).to.exist;\r",
+							"    pm.environment.set(\"productId\", product.productId);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://www.advantageonlineshopping.com/catalog/api/v1/products",
+					"protocol": "https",
+					"host": [
+						"www",
+						"advantageonlineshopping",
+						"com"
+					],
+					"path": [
+						"catalog",
+						"api",
+						"v1",
+						"products"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add product",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Verifica se o produto foi adicionado com sucesso\r",
+							"pm.test(\"Status code é 404\", function () {\r",
+							"    pm.response.to.have.status(404);\r",
+							"});\r",
+							"\r",
+							"// Verifica se a resposta contém a confirmação de adição ao carrinho\r",
+							"pm.test(\"Produto adicionado ao carrinho\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"The requested resource\");\r",
+							"});\r",
+							"// Test to check if the response is in HTML format\r",
+							"pm.test(\"Response content type is HTML\", function () {\r",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.include('text/html');\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://www.advantageonlineshopping.com/order/api/v1/carts/{{userId}}/product/{{productId}}/quantity/1",
+					"protocol": "https",
+					"host": [
+						"www",
+						"advantageonlineshopping",
+						"com"
+					],
+					"path": [
+						"order",
+						"api",
+						"v1",
+						"carts",
+						"{{userId}}",
+						"product",
+						"{{productId}}",
+						"quantity",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "validate cart",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Verifica se a resposta é bem-sucedida\r",
+							"pm.test(\"Status code é 500\", function () {\r",
+							"    pm.response.to.have.status(500);\r",
+							"});\r",
+							"\r",
+							"// Verifica se o carrinho contém o produto \"HP Pavilion 15\"\r",
+							"let cart = pm.response.json();\r",
+							"let productInCart = cart.products && cart.products.find(p => p.productId === pm.environment.get(\"productId\"));\r",
+							"\r",
+							"pm.test(\"Produto 'HP Pavilion 15' está no carrinho\", function () {\r",
+							"    pm.expect(productInCart).to.exist;\r",
+							"    pm.expect(productInCart.quantity).to.equal(1);\r",
+							"});\r",
+							"// Verifica se a resposta contém as propriedades esperadas\r",
+							"pm.test(\"A resposta contém as propriedades esperadas\", function () {\r",
+							"    pm.expect(pm.response.json()).to.have.property('timestamp');\r",
+							"    pm.expect(pm.response.json()).to.have.property('status');\r",
+							"    pm.expect(pm.response.json()).to.have.property('error');\r",
+							"    pm.expect(pm.response.json()).to.have.property('path');\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://www.advantageonlineshopping.com/order/api/v1/carts/{{userId}}",
+					"protocol": "https",
+					"host": [
+						"www",
+						"advantageonlineshopping",
+						"com"
+					],
+					"path": [
+						"order",
+						"api",
+						"v1",
+						"carts",
+						"{{userId}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
